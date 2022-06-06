@@ -1,14 +1,28 @@
 let RoundResult;
+let Pscore = 0;
+let CPUscore = 0;
+
+const consol = document.querySelector(".console");
+const buttons = document.querySelectorAll("button");
+const score = document.querySelector(".score");
+
+score.innerText = "0 - 0";
+
+buttons.forEach((button) => {
+  button.addEventListener("click", () => {
+    !checkRound() ? game(button.id) : newGame(button.id);
+  });
+});
 
 function PlayRound(PlayerSelection, CPUSelection) {
   if (PlayerSelection == CPUSelection) {
-    console.log("tie");
+    consol.innerText += "tie \r\n";
     RoundResult = 0;
   } else if (WinCombo[PlayerSelection] == CPUSelection) {
-    console.log(`You win ${PlayerSelection} beats ${CPUSelection}`);
+    consol.innerText += `You win ${PlayerSelection} beats ${CPUSelection} \r\n`;
     RoundResult = "Pscore";
   } else {
-    console.log(`You lose ${PlayerSelection} loses to ${CPUSelection}`);
+    consol.innerText += `You lose ${PlayerSelection} loses to ${CPUSelection} \r\n`;
     RoundResult = "CPUscore";
   }
 }
@@ -16,9 +30,7 @@ function ComputerPlay() {
   let choice = ["rock", "paper", "scissor"];
   return choice[Math.floor(choice.length * Math.random())];
 }
-function GetChoice() {
-  return prompt("rock paper or scissor").toLowerCase();
-}
+
 const WinCombo = {
   rock: "scissor",
 
@@ -27,23 +39,39 @@ const WinCombo = {
   scissor: "paper",
 };
 
-function game() {
-  let Pscore = 0,
-    CPUscore = 0;
-  for (let index = 0; index < 5; index++) {
-    PlayRound(GetChoice(), ComputerPlay());
-    if (RoundResult) {
-      if (RoundResult == "Pscore") {
-        Pscore++;
-      } else {
-        CPUscore++;
-      }
+function game(choix) {
+  PlayRound(choix, ComputerPlay());
+  if (RoundResult) {
+    if (RoundResult == "Pscore") {
+      Pscore++;
+    } else {
+      CPUscore++;
     }
+    updateScore();
   }
+
   console.log(Pscore, CPUscore);
   Pscore == CPUscore
     ? console.log("you tied")
     : Pscore > CPUscore
     ? console.log("Player won")
     : console.log("CPU won");
+}
+function checkRound() {
+  if (Pscore == 5 || CPUscore == 5) {
+    return true;
+  } else {
+    return false;
+  }
+}
+function updateScore() {
+  score.innerText = Pscore + "-" + CPUscore;
+}
+
+function newGame(choice) {
+  Pscore = 0;
+  CPUscore = 0;
+  consol.innerText = "";
+  score.innerText = "0 - 0";
+  game(choice);
 }
